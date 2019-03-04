@@ -2,37 +2,50 @@ import numpy as np
 from scipy.linalg import eigh_tridiagonal
 from matplotlib import pyplot as plt
 
-L = 2.1
-n = 1000
-m = 1
-h_bar = 1
-delta_x = L/(n+1)
-x_vec = np.linspace(0, L, n)
-
-#H = np.zeros([n, n])
-main_diag = np.zeros(n)
-off_diag = np.zeros(n-1)
 
 # Box potential
-V_box = lambda x: 0
+V_box = lambda x: 0*x
 
-# Single well potential
-def single_well(x, V0=-3000, w=0.1, x_0=L/2 - 0.1/2):
-	if x >= x_0 and x <= x_0 + w:
-		return V0
+# n well potential
+def well(x, w, n_w, b,V0=-3000):
+	n = len(x)
+	V_mid_ex = np.array([[V0]*int(w*n) + [0]*int(b*n)]*n_w).flatten()
+	V_mid = V_mid_ex[:-int(b*n)]
+	
+	m = len(V_mid)
+	diff = n - m
+	len_b = diff//2
+	len_f = diff - len_b
+	V_front = np.array([0]*len_f)
+	V_back = np.array([0]*len_b)
+
+	V_temp = np.append(V_front, V_mid)
+	V_vec = np.append(V_temp, V_back)
+
+	return V_vec
+
+
+def analyze(V, n_w):
+	w = 0.1
+	b = 0.1
+	L = (20 + n_w)*w + (n_w -1)*b
+	n = 2500
+	m = 1
+	h_bar = 1
+	delta_x = L/(n+1)
+	x_vec = np.linspace(0, L, n)
+
+
+	#H = np.zeros([n, n])
+	main_diag = np.zeros(n)
+	off_diag = np.zeros(n-1)
+		
+	if n_w == 0:
+		V_vals = V(x_vec)
+
 	else:
-		return 0*x
-
-# Double well potential
-
-# Many wells potential
-
-
-def analyze(V):
-	V_vals = np.zeros(n)
-	for i in range(n):
-		V_vals[i] = V(x_vec[i])
-
+		V_vals = V(x_vec, w, n_w, b)
+		print(V_vals)
 
 	for i in range(n):
 		# Fills main diagonal
@@ -53,6 +66,6 @@ def analyze(V):
 		plt.plot(x_vec, energies[i] + wave_funcs[i]*1000)
 	plt.show()
 
-analyze(V_box)
-analyze(single_well)
+analyze(V_box, 0)
+analyze(well, 5)
 
