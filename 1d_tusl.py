@@ -2,6 +2,11 @@ import numpy as np
 from scipy.linalg import eigh_tridiagonal
 from matplotlib import pyplot as plt
 
+w = 0.1
+b = 0.05
+n = 1000
+m = 1
+h_bar = 1
 num_well = 4
 
 # Box potential
@@ -27,12 +32,7 @@ def well(x, w, n_w, b, L,V0=-3000):
 
 
 def analyze(n_w):
-	w = 0.1
-	b = 0.05
 	L = (20 + n_w)*w + (n_w -1)*b
-	n = 1000
-	m = 1
-	h_bar = 1
 	delta_x = L/(n+1)
 	x_vec = np.linspace(0, L, n)
 
@@ -63,16 +63,20 @@ def analyze(n_w):
 	wave_funcs = wave_funcs.T
 	return energies, wave_funcs, iter_lim, L, V_vals
 
+
 def band_widths(lower, upper):
-	x_vec = np.linspace(lower, upper, upper-lower)
+	x_vec = np.linspace(lower, upper, upper-lower +1)
 	bw = np.zeros([3, upper-lower])
-	for i in range(lower, upper):
+	for i in range(lower, upper +1):
 		energies, _,_,_,_ = analyze(i)
-		# print("heyhey: ", energies, "\n")
+		print("heyhey: ", energies, "\n")
 		for j in range(3):
 			bw[j][i-lower] = np.absolute(energies[i*j] - energies[(j+1)*i -1])
-			print("yoo: ", energies[(j+1)*i - 1])
+			#print("yoo: ", energies[(j+1)*i - 1])
 			#print(bw[j][i - lower])
+			#print(i, " øvre E: ", (j+1)*i - 1, "nedre E:", i*j, "diff: ", bw[j][i-lower])
+			print(i, "lower, upper:",energies[i*j], " ", energies[(j+1)*i - 1])
+
 
 	for i in range(3):
 		plt.plot(x_vec, bw[i])
@@ -85,12 +89,12 @@ def plot_wave_funcs(energies, wave_funcs, iter_lim, L, V_vals):
 		plt.plot([0, L], [energies[i]]*2)
 		plt.plot(x_vec, V_vals)
 		plt.plot(x_vec, energies[i] + wave_funcs[i]*3000)
-		plt.plot()
 	plt.show()
+
 
 E_b, w_b, iter_lim_b, L_b, V_vals_b = analyze(0)
 plot_wave_funcs(E_b, w_b, iter_lim_b, L_b, V_vals_b)
 energies, wave_funcs, iter_lim, L, V_vals = analyze(10)
 plot_wave_funcs(energies, wave_funcs, iter_lim, L, V_vals)
 
-band_widths(2, 50)
+band_widths(2, 10)
