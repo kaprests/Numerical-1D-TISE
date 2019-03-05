@@ -4,7 +4,6 @@ from matplotlib import pyplot as plt
 
 w = 0.1
 b = 0.05
-n = 1000
 m = 1
 h_bar = 1
 num_well = 4
@@ -13,7 +12,7 @@ num_well = 4
 V_box = lambda x: 0*x
 
 # n well potential
-def well(x, w, n_w, b, L,V0=-3000):
+def well(x, w, n_w, b, L, V0=-3000):
 	n = len(x)
 	V_mid_ex = np.array([[V0]*int(w*n/L) + [0]*int(b*n/L)]*n_w).flatten()
 	V_mid = V_mid_ex[:-int(b*n/L)]
@@ -32,14 +31,15 @@ def well(x, w, n_w, b, L,V0=-3000):
 
 
 def analyze(n_w):
+	n = n_w*1000 + 500
 	L = (20 + n_w)*w + (n_w -1)*b
 	delta_x = L/(n+1)
 	x_vec = np.linspace(0, L, n)
 
 
 	#H = np.zeros([n, n])
-	main_diag = np.zeros(n)
-	off_diag = np.zeros(n-1)
+	main_diag = np.ones(n)
+	off_diag = np.ones(n-1)
 		
 	if n_w == 0:
 		V_vals = V_box(x_vec)
@@ -49,16 +49,10 @@ def analyze(n_w):
 		V_vals = well(x_vec, w, n_w, b, L)
 		iter_lim = n_w*3
 
-	for i in range(n):
-		# Fills main diagonal
-		#H[i][i] = ((h_bar**2)/(m*(delta_x**2))) + V(x_vec[i])
-		main_diag[i] = ((h_bar**2)/(m*(delta_x**2))) + V_vals[i]
-
-	for i in range(n-1):
-		# Fills second diagonals below and above main
-		#H[i+1][i] = H[i][i +1] = (h_bar**2)/(2*m*(delta_x**2))
-		off_diag[i] = -(h_bar**2)/(2*m*(delta_x**2))
-
+	main_diag *= ((h_bar**2)/(m*(delta_x**2)))
+	main_diag += V_vals
+	off_diag *= -(h_bar**2)/(2*m*(delta_x**2))
+	
 	energies, wave_funcs = eigh_tridiagonal(main_diag, off_diag)
 	wave_funcs = wave_funcs.T
 	return energies, wave_funcs, iter_lim, L, V_vals
