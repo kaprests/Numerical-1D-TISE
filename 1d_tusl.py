@@ -5,9 +5,8 @@ from matplotlib import pyplot as plt
 w = 0.1
 b = 0.05
 n = 1000
-m = 1
-h_bar = 1
-num_well = 4
+m = 9.1e-31
+h_bar = 6.6e-16
 
 # Box potential
 V_box = lambda x: 0*x
@@ -28,40 +27,44 @@ def well(x, w, n_w, b, L,V0=-3000):
 	V_temp = np.append(V_front, V_mid)
 	V_vec = np.append(V_temp, V_back)
 
-	return V_vec
+	return V_vec, n
 
 
-def analyze(n_w):
+def analyze(n_w, iter_lim = 5):
 	L = (20 + n_w)*w + (n_w -1)*b
-	delta_x = L/(n+1)
+	n = 5000
 	x_vec = np.linspace(0, L, n)
+	delta_x = L / (n + 1)
 
-
-	#H = np.zeros([n, n])
-	main_diag = np.zeros(n)
-	off_diag = np.zeros(n-1)
-		
 	if n_w == 0:
 		V_vals = V_box(x_vec)
-		iter_lim = 5
 
 	else:
-		V_vals = well(x_vec, w, n_w, b, L)
-		iter_lim = n_w*3
+		V_vals, _ = well(x_vec, w, n_w, b, L)
+
+
+
+
+
+	H = np.zeros([n, n])
+	#main_diag = np.zeros(n)
+	#off_diag = np.zeros(n-1)
+
+
 
 	for i in range(n):
 		# Fills main diagonal
-		#H[i][i] = ((h_bar**2)/(m*(delta_x**2))) + V(x_vec[i])
-		main_diag[i] = ((h_bar**2)/(m*(delta_x**2))) + V_vals[i]
+		H[i][i] = ((h_bar**2)/(m*(delta_x**2))) + V_vals[i]
+		#main_diag[i] = ((h_bar**2)/(m*(delta_x**2))) + V_vals[i]
 
 	for i in range(n-1):
 		# Fills second diagonals below and above main
-		#H[i+1][i] = H[i][i +1] = (h_bar**2)/(2*m*(delta_x**2))
-		off_diag[i] = -(h_bar**2)/(2*m*(delta_x**2))
+		H[i+1][i] = H[i][i +1] = (h_bar**2)/(2*m*(delta_x**2))
+		#off_diag[i] = -(h_bar**2)/(2*m*(delta_x**2))
 
-	energies, wave_funcs = eigh_tridiagonal(main_diag, off_diag)
+	energies, wave_funcs = np.linalg.eigh(H)
 	wave_funcs = wave_funcs.T
-	return energies, wave_funcs, iter_lim, L, V_vals
+	return energies, wave_funcs, iter_lim, L, V_vals, n_w
 
 
 def band_widths(lower, upper):
@@ -82,21 +85,44 @@ def band_widths(lower, upper):
 		plt.plot(x_vec, bw[i])
 	plt.savefig("bw.png")
 	plt.show()
-	
 
-def plot_wave_funcs(energies, wave_funcs, iter_lim, L, V_vals):
+def band_widths_noob(lower, upper):
+	x_vec = np.linspace(2, 10, 9)
+	bw_1 = np.zeros(9)
+	bw_2 = np.zeros(9)
+	bw_3 = np.zeros(9)
+
+	for i in range(9):
+		n_w = i + 2
+		energies, a, z, c, d, e = analyze(n_w, n_w * 3)
+		bw_1[i] = energies[n_w - 1] - energies[0]
+		#print(n_w, "diff", bw_1[i], " energies[n_w-1] ", energies[n_w - 1], " energies[0] ", energies[0])
+		#print(energies[:31])
+		bw_2[i] = energies[2*n_w - 1] - energies[n_w]
+		bw_3[i] = energies[3*n_w - 1] - energies[2*n_w]
+
+	plt.plot(x_vec, bw_1)
+	plt.plot(x_vec, bw_2)
+	plt.plot(x_vec, bw_3)
+
+	plt.savefig("bwnoob.png")
+	plt.show()
+
+def plot_wave_funcs(energies, wave_funcs, iter_lim, L, V_vals, n_w):
 	x_vec = np.linspace(0, L, len(V_vals))
 	for i in range(iter_lim): 
 		plt.plot([0, L], [energies[i]]*2)
 		plt.plot(x_vec, V_vals)
 		plt.plot(x_vec, energies[i] + wave_funcs[i]*3000)
-	plt.savefig("fig" + str(iter_lim) + ".png")
+	plt.savefig("figW" + str(n_w) + "E" + str(iter_lim) + ".png")
 	plt.show()
 
 
-E_b, w_b, iter_lim_b, L_b, V_vals_b = analyze(9)
-plot_wave_funcs(E_b, w_b, iter_lim_b, L_b, V_vals_b)
-energies, wave_funcs, iter_lim, L, V_vals = analyze(10)
-plot_wave_funcs(energies, wave_funcs, iter_lim, L, V_vals)
+#energies, wave_funcs, iter_lim, L, V_vals, n_w = analyze(8, 24)
+#plot_wave_funcs(energies, wave_funcs, iter_lim, L, V_vals, n_w)
+#energies, wave_funcs, iter_lim, L, V_vals, n_w = analyze(9, 27)
+#plot_wave_funcs(energies, wave_funcs, iter_lim, L, V_vals, n_w)
+#energies, wave_funcs, iter_lim, L, V_vals, n_w = analyze(10, 30)
+#plot_wave_funcs(energies, wave_funcs, iter_lim, L, V_vals, n_w)
 
-band_widths(2, 10)
+band_widths_noob(2, 10)
