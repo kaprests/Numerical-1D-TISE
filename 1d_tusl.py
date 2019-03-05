@@ -65,9 +65,9 @@ def analyze(n_w):
 
 
 def band_widths(lower, upper):
-	x_vec = np.linspace(lower, upper, upper-lower +1)
+	x_vec = np.linspace(lower, upper, upper-lower)
 	bw = np.zeros([3, upper-lower])
-	for i in range(lower, upper +1):
+	for i in range(lower, upper):
 		energies, _,_,_,_ = analyze(i)
 		print("heyhey: ", energies, "\n")
 		for j in range(3):
@@ -80,6 +80,7 @@ def band_widths(lower, upper):
 
 	for i in range(3):
 		plt.plot(x_vec, bw[i])
+	plt.savefig("bw.png")
 	plt.show()
 	
 
@@ -89,10 +90,11 @@ def plot_wave_funcs(energies, wave_funcs, iter_lim, L, V_vals):
 		plt.plot([0, L], [energies[i]]*2)
 		plt.plot(x_vec, V_vals)
 		plt.plot(x_vec, energies[i] + wave_funcs[i]*3000)
+	plt.savefig("fig" + str(iter_lim) + ".png")
 	plt.show()
 
 
-E_b, w_b, iter_lim_b, L_b, V_vals_b = analyze(0)
+E_b, w_b, iter_lim_b, L_b, V_vals_b = analyze(9)
 plot_wave_funcs(E_b, w_b, iter_lim_b, L_b, V_vals_b)
 energies, wave_funcs, iter_lim, L, V_vals = analyze(10)
 plot_wave_funcs(energies, wave_funcs, iter_lim, L, V_vals)
