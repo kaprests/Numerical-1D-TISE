@@ -82,11 +82,9 @@ def plot_wave_funcs(energies, wave_funcs, iter_lim, L, V_vals, n_w):
 	plt.show()
 
 
-#energies, wave_funcs, iter_lim, L, V_vals, n_w = analyze(8, 24)
-#plot_wave_funcs(energies, wave_funcs, iter_lim, L, V_vals, n_w)
-#energies, wave_funcs, iter_lim, L, V_vals, n_w = analyze(9, 27)
-#plot_wave_funcs(energies, wave_funcs, iter_lim, L, V_vals, n_w)
-energies, wave_funcs, iter_lim, L, V_vals, n_w = analyze(2, 6)
-plot_wave_funcs(energies, wave_funcs, iter_lim, L, V_vals, n_w)
+E_b, w_b, iter_lim_b, L_b, V_vals_b = analyze(0)
+plot_wave_funcs(E_b, w_b, iter_lim_b, L_b, V_vals_b)
+energies, wave_funcs, iter_lim, L, V_vals = analyze(1)
+plot_wave_funcs(energies, wave_funcs, iter_lim, L, V_vals)
 
 #band_widths(2, 10)
