@@ -4,15 +4,9 @@ from matplotlib import pyplot as plt
 
 w = 0.1
 b = 0.05
-<<<<<<< HEAD
-n = 1000
-m = 9.1e-31
-h_bar = 6.6e-16
-=======
 m = 1
 h_bar = 1
 num_well = 4
->>>>>>> ed9183b574db1008c2fe81edd8057966690fa895
 
 # Box potential
 V_box = lambda x: 0*x
@@ -36,60 +30,28 @@ def well(x, w, n_w, b, L, V0=-3000):
 	return V_vec, n
 
 
-<<<<<<< HEAD
 def analyze(n_w, iter_lim = 5):
-=======
-def analyze(n_w):
-	n = n_w*1000 + 500
->>>>>>> ed9183b574db1008c2fe81edd8057966690fa895
+	n = n_w*200 + 500
 	L = (20 + n_w)*w + (n_w -1)*b
 	n = 5000
 	x_vec = np.linspace(0, L, n)
 	delta_x = L / (n + 1)
 
-<<<<<<< HEAD
-=======
-
 	#H = np.zeros([n, n])
 	main_diag = np.ones(n)
 	off_diag = np.ones(n-1)
 		
->>>>>>> ed9183b574db1008c2fe81edd8057966690fa895
 	if n_w == 0:
 		V_vals = V_box(x_vec)
 
 	else:
 		V_vals, _ = well(x_vec, w, n_w, b, L)
 
-
-
-
-
-	H = np.zeros([n, n])
-	#main_diag = np.zeros(n)
-	#off_diag = np.zeros(n-1)
-
-
-
-<<<<<<< HEAD
-	for i in range(n):
-		# Fills main diagonal
-		H[i][i] = ((h_bar**2)/(m*(delta_x**2))) + V_vals[i]
-		#main_diag[i] = ((h_bar**2)/(m*(delta_x**2))) + V_vals[i]
-
-	for i in range(n-1):
-		# Fills second diagonals below and above main
-		H[i+1][i] = H[i][i +1] = (h_bar**2)/(2*m*(delta_x**2))
-		#off_diag[i] = -(h_bar**2)/(2*m*(delta_x**2))
-
-	energies, wave_funcs = np.linalg.eigh(H)
-=======
 	main_diag *= ((h_bar**2)/(m*(delta_x**2)))
 	main_diag += V_vals
 	off_diag *= -(h_bar**2)/(2*m*(delta_x**2))
 	
 	energies, wave_funcs = eigh_tridiagonal(main_diag, off_diag)
->>>>>>> ed9183b574db1008c2fe81edd8057966690fa895
 	wave_funcs = wave_funcs.T
 	return energies, wave_funcs, iter_lim, L, V_vals, n_w
 
@@ -145,11 +107,9 @@ def plot_wave_funcs(energies, wave_funcs, iter_lim, L, V_vals, n_w):
 	plt.show()
 
 
-#energies, wave_funcs, iter_lim, L, V_vals, n_w = analyze(8, 24)
-#plot_wave_funcs(energies, wave_funcs, iter_lim, L, V_vals, n_w)
-#energies, wave_funcs, iter_lim, L, V_vals, n_w = analyze(9, 27)
-#plot_wave_funcs(energies, wave_funcs, iter_lim, L, V_vals, n_w)
-#energies, wave_funcs, iter_lim, L, V_vals, n_w = analyze(10, 30)
-#plot_wave_funcs(energies, wave_funcs, iter_lim, L, V_vals, n_w)
+E_b, w_b, iter_lim_b, L_b, V_vals_b = analyze(4)
+plot_wave_funcs(E_b, w_b, iter_lim_b, L_b, V_vals_b)
+energies, wave_funcs, iter_lim, L, V_vals = analyze(10)
+plot_wave_funcs(energies, wave_funcs, iter_lim, L, V_vals)
 
-band_widths_noob(2, 10)
+band_widths(1, 50)
