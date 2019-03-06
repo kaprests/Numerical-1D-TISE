@@ -31,7 +31,7 @@ def well(x, w, n_w, b, L, V0=-3000):
 
 
 def analyze(n_w):
-	n = n_w*1000 + 500
+	n = n_w*200 + 500
 	L = (20 + n_w)*w + (n_w -1)*b
 	delta_x = L/(n+1)
 	x_vec = np.linspace(0, L, n)
@@ -88,9 +88,9 @@ def plot_wave_funcs(energies, wave_funcs, iter_lim, L, V_vals):
 	plt.show()
 
 
-E_b, w_b, iter_lim_b, L_b, V_vals_b = analyze(9)
+E_b, w_b, iter_lim_b, L_b, V_vals_b = analyze(4)
 plot_wave_funcs(E_b, w_b, iter_lim_b, L_b, V_vals_b)
 energies, wave_funcs, iter_lim, L, V_vals = analyze(10)
 plot_wave_funcs(energies, wave_funcs, iter_lim, L, V_vals)
 
-band_widths(2, 10)
+band_widths(1, 50)
