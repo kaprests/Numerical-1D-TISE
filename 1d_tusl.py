@@ -37,24 +37,15 @@ def analyze(n_w, iter_lim = 5):
 	x_vec = np.linspace(0, L, n)
 	delta_x = L / (n + 1)
 
-	#H = np.zeros([n, n])
+	#H = np.ones([n, n])
 	main_diag = np.ones(n)
 	off_diag = np.ones(n-1)
+
 	if n_w == 0:
 		V_vals = V_box(x_vec)
 
 	else:
 		V_vals = well(x_vec, w, n_w, b, L)
-
-
-
-
-
-	#H = np.zeros([n, n])
-	main_diag = np.zeros(n)
-	off_diag = np.zeros(n-1)
-
-
 
 
 	main_diag *= ((h_bar**2)/(m*(delta_x**2)))
@@ -95,7 +86,7 @@ def plot_wave_funcs(energies, wave_funcs, iter_lim, L, V_vals, n_w):
 #plot_wave_funcs(energies, wave_funcs, iter_lim, L, V_vals, n_w)
 #energies, wave_funcs, iter_lim, L, V_vals, n_w = analyze(9, 27)
 #plot_wave_funcs(energies, wave_funcs, iter_lim, L, V_vals, n_w)
-energies, wave_funcs, iter_lim, L, V_vals, n_w = analyze(1, 3)
+energies, wave_funcs, iter_lim, L, V_vals, n_w = analyze(2, 6)
 plot_wave_funcs(energies, wave_funcs, iter_lim, L, V_vals, n_w)
 
-band_widths(2, 10)
+#band_widths(2, 10)
