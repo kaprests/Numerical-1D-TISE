@@ -33,14 +33,13 @@ def well(x, w, n_w, b, L, V0=-3000):
 
 def analyze(n_w, iter_lim = 5):
 	L = (20 + n_w)*w + (n_w -1)*b
-	n = 5000
+	n = 1000
 	x_vec = np.linspace(0, L, n)
 	delta_x = L / (n + 1)
 
 	#H = np.zeros([n, n])
 	main_diag = np.ones(n)
 	off_diag = np.ones(n-1)
-
 	if n_w == 0:
 		V_vals = V_box(x_vec)
 
@@ -51,9 +50,9 @@ def analyze(n_w, iter_lim = 5):
 
 
 
-	H = np.zeros([n, n])
-	#main_diag = np.zeros(n)
-	#off_diag = np.zeros(n-1)
+	#H = np.zeros([n, n])
+	main_diag = np.zeros(n)
+	off_diag = np.zeros(n-1)
 
 
 
@@ -63,7 +62,6 @@ def analyze(n_w, iter_lim = 5):
 	off_diag *= -(h_bar**2)/(2*m*(delta_x**2))
 	
 	energies, wave_funcs = eigh_tridiagonal(main_diag, off_diag)
-
 	wave_funcs = wave_funcs.T
 	return energies, wave_funcs, iter_lim, L, V_vals, n_w
 
@@ -73,13 +71,8 @@ def band_widths(lower, upper):
 	bw = np.zeros([3, upper-lower])
 	for i in range(lower, upper):
 		energies, _,_,_,_ = analyze(i)
-		print("heyhey: ", energies, "\n")
 		for j in range(3):
 			bw[j][i-lower] = np.absolute(energies[i*j] - energies[(j+1)*i -1])
-			#print("yoo: ", energies[(j+1)*i - 1])
-			#print(bw[j][i - lower])
-			#print(i, " øvre E: ", (j+1)*i - 1, "nedre E:", i*j, "diff: ", bw[j][i-lower])
-			print(i, "lower, upper:",energies[i*j], " ", energies[(j+1)*i - 1])
 
 
 	for i in range(3):
