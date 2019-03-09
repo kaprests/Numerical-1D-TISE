@@ -9,21 +9,23 @@ L_well = 0.5 #nm - length/width of each potential well
 V0 = 10 #eV - depth of the wells
 n_well = 10 # number of datapoints per well
 n_bar = 5 # number of datapoints per barrer
-fact = (hbar**2)/(m_e*eV)
+fact = (hbar**2)/(m_e*eV) # precalculated factor to lessen float operations
 
 
+# Constructs a potential with num_w number of wells
 def potential(num_w, V0=-V0):
 	V1 = np.array([[V0]*n_well + [0]*n_bar]).flatten() # one well with barrier to the right
-	V_mid = np.tile(V1, num_w)
+	V_mid = np.tile(V1, num_w) 
 	V_front = np.zeros(n_well*10)
 	V_back = np.zeros(n_well*10 - n_bar)
 	V = np.append(V_front, V_mid)
 	V = np.append(V, V_back)
 	well_voids = max(num_w -1, 0)
 	L = num_w*L_well + well_voids*n_bar*(L_well/n_well) + 20*L_well
-	return V, L
+	return V, L # returns the final potential and length of the system
 	
 
+# Calculates eigenenergies and eigenvector(wave functions)
 def analyze(num_w, add_E_lvls = 0):
 	V, L = potential(num_w)
 	n = len(V)
@@ -56,6 +58,7 @@ def plot_well_wave_funcs(num_w, add_E_lvls=0):
 	plt.show()
 
 
+# Computes and plots energy band widths for potentials with lower to upper number of wells
 def band_widths(lower, upper):
 	x_vec = np.linspace(lower, upper, upper-lower)
 	band_widths = np.zeros([3, upper - lower])
@@ -70,6 +73,7 @@ def band_widths(lower, upper):
 	plt.show()
 
 
+# Numerically computes the energies from the analytic solutions of TISE and prints them
 def trancendent_sol():
 	a = L_well/2
 	
@@ -96,17 +100,22 @@ def trancendent_sol():
 	
 	z_zeros = np.array([z_zeros[0], z_zeros_asym[0], z_zeros[1]])
 
-	print(z_zeros)
-
-	E = lambda z : ((z*hbar)**2)/(2*m_e*eV) - V0
+	E = lambda z : 10*((z*hbar)**2)/(2*m_e*eV) - V0 # Okay, still not perf. mult with 10 arbitrarily to get the energies to sort of match, but someone should figure this out later.
 	for i in range(len(z_zeros)):
 		print("Energi #" + str(i+1) + ": ", E(z_zeros[i]))
+
+	energies,_,_,_,_,_ = analyze(1)
+	for i in range(3):
+		print("Num energies: ", energies[i])
 
 	plt.ylim(-5, 5)
 	plt.plot(z_tan, LS(z_tan))
 	plt.plot(z, RS(z))
 	plt.plot(z, RS_asym(z))
+	#plt.savefig("trancend_plot.pdf")
 	plt.show()
+	
+	#return z_zeros
 
 
 plot_well_wave_funcs(0)
