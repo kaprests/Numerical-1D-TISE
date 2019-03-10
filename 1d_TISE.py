@@ -5,8 +5,8 @@ from scipy.constants import hbar, m_e, eV
 from scipy.linalg import eigh_tridiagonal
 
 hbar *=1e9 #Plancks constant, scaled for nm as recomended by mr. MAN ;)
-L_well = 0.5 #nm - length/width of each potential well
-V0 = 10 #eV - depth of the wells
+L_well = 1 #nm - length/width of each potential well
+V0 = 3 #eV - depth of the wells
 n_well = 10 # number of datapoints per well
 n_bar = 5 # number of datapoints per barrer
 fact = (hbar**2)/(m_e*eV) # precalculated factor to lessen float operations
@@ -100,7 +100,7 @@ def trancendent_sol():
 	
 	z_zeros = np.array([z_zeros[0], z_zeros_asym[0], z_zeros[1]])
 
-	E = lambda z : 10*((z*hbar)**2)/(2*m_e*eV) - V0 # Okay, still not perf. mult with 10 arbitrarily to get the energies to sort of match, but someone should figure this out later.
+	E = lambda z : ((z*hbar)**2)/((a**2)*2*m_e*eV) - V0 # Okay, still not perf. div by a**2 arbitrarily to get the energies to match, but someone should figure this out later.
 	for i in range(len(z_zeros)):
 		print("Energi #" + str(i+1) + ": ", E(z_zeros[i]))
 
