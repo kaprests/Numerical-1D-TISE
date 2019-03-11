@@ -118,7 +118,7 @@ def trancendent_sol():
 	#return z_zeros
 
 
-plot_well_wave_funcs(0)
+plot_well_wave_funcs(0, 10)
 plot_well_wave_funcs(1)
 plot_well_wave_funcs(10)
 plot_well_wave_funcs(50)
